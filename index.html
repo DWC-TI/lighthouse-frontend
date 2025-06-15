@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lighthouse Modular Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Link to your external CSS file -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- Modular menu bar as Card 0 -->
+    <div id="menu-placeholder"></div>
+    <main class="main">
+      <div class="dashboard-row" id="row1"></div>
+      <div class="dashboard-row" id="row2"></div>
+      <div class="dashboard-row" id="row3"></div>
+      <div class="dashboard-row" id="row4"></div>
+      <div class="dashboard-row" id="row5"></div>
+      <div class="footer-action">
+        <button>Do a Rhythm Pulse</button>
+      </div>
+    </main>
+
+    <!-- Floating action buttons: Keeper & Manual -->
+    <div class="floating-buttons">
+      <button
+        class="fab fab-main"
+        id="keeper-fab"
+        title="Ask the Lighthouse Keeper"
+      >
+        🧙‍♂️
+      </button>
+      <button class="fab" id="manual-fab" title="How to Use This Console">
+        ❓
+      </button>
+    </div>
+
+    <!-- Lighthouse Keeper Modal -->
+    <div class="modal-overlay" id="keeper-modal" style="display: none">
+      <div class="modal-box">
+        <h3 style="margin-top: 0">Lighthouse Keeper</h3>
+        <div style="margin-bottom: 1.2em">
+          <strong>Today’s focus:</strong><br />
+          <span style="color: var(--lh-coral)"
+            >Review your Return Point.<br />
+            Then log a Check-In to reset your creative compass.</span
+          >
+        </div>
+        <button
+          onclick="document.getElementById('keeper-modal').style.display='none';"
+          class="modal-close-btn"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!-- Manual Modal -->
+    <div class="modal-overlay" id="manual-modal" style="display: none">
+      <div class="modal-box">
+        <h3 style="margin-top: 0">How to Use Your Lighthouse Console</h3>
+        <div
+          style="
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 1.2em;
+            font-size: 1rem;
+          "
+        >
+          <b>Welcome!</b> This dashboard helps you stay in creative flow.<br /><br />
+          <ul>
+            <li>
+              <b>Cards 1–5:</b> See your energy, tasks, return point, and
+              creative trends.
+            </li>
+            <li>
+              <b>Creative Flow Chart:</b> Higher = greener, lower = redder.
+            </li>
+            <li>
+              <b>Check-In:</b> Log how you feel and keep your focus clear.
+            </li>
+            <li>
+              <b>Weekly Beacon:</b> Reflect every week for continuous
+              improvement.
+            </li>
+          </ul>
+          <b>What is the Lighthouse Method?</b>
+          <div style="margin: 0.4em 0">
+            A rhythm for creative and meaningful work: regular check-ins, return
+            points, and “beacons” to light your way.
+          </div>
+        </div>
+        <button
+          onclick="document.getElementById('manual-modal').style.display='none';"
+          class="modal-close-btn"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // 1. Load the menu bar (Card 0)
+      fetch("cards/card0.html")
+        .then((res) => res.text())
+        .then((html) => {
+          document.getElementById("menu-placeholder").innerHTML = html;
+        });
+
+      // 2. Modular cards for each row
+      const cardLayout = [
+        { row: "row1", files: ["cards/card1.html"] },
+        {
+          row: "row2",
+          files: ["cards/card2.html", "cards/card3.html", "cards/card4.html"],
+        },
+        { row: "row3", files: ["cards/card5.html"] },
+        { row: "row4", files: ["cards/card6.html"] },
+        {
+          row: "row5",
+          files: ["cards/card7.html", "cards/card8.html", "cards/card9.html"],
+        },
+      ];
+
+      // Track when all cards are loaded for post-processing
+      let loadedCount = 0;
+      let totalCount = cardLayout.reduce(
+        (sum, section) => sum + section.files.length,
+        0
+      );
+
+      cardLayout.forEach((section) => {
+        const row = document.getElementById(section.row);
+        section.files.forEach((file) => {
+          const col = document.createElement("div");
+          col.className = section.files.length === 1 ? "col-12" : "col-4";
+          col.innerHTML = `<div>Loading...</div>`;
+          fetch(file)
+            .then((res) => res.text())
+            .then((html) => {
+              col.innerHTML = html;
+              loadedCount++;
+              // After all cards are loaded, render the chart if present
+              if (loadedCount === totalCount) {
+                setTimeout(() => {
+                  const ctx = document.getElementById("creativeFlowChart");
+                  if (ctx) {
+                    // Example data (change to your real values!)
+                    const flowData = [2, 4, 7, 6, 3, 8, 5];
+                    const dayLabels = [
+                      "Mon",
+                      "Tue",
+                      "Wed",
+                      "Thu",
+                      "Fri",
+                      "Sat",
+                      "Sun",
+                    ];
+                    // Inverted logic for color:
+                    // 1-3: green (high, top of chart), 4-6: yellow (middle), 7-9: red (low, bottom)
+                    function getColor(val) {
+                      if (val <= 3) return "#5fc185"; // green
+                      if (val <= 6) return "#ffe066"; // yellow
+                      return "#fa7268"; // red
+                    }
+                    new Chart(ctx, {
+                      type: "line",
+                      data: {
+                        labels: dayLabels,
+                        datasets: [
+                          {
+                            label: "Creative Flow",
+                            data: flowData,
+                            fill: false,
+                            tension: 0.35,
+                            segment: {
+                              borderColor: (ctx) => {
+                                const i = ctx.p1DataIndex;
+                                return getColor(flowData[i]);
+                              },
+                            },
+                            borderWidth: 3,
+                            pointBackgroundColor: flowData.map(getColor),
+                            pointBorderColor: flowData.map(getColor),
+                            pointRadius: 7,
+                            pointHoverRadius: 10,
+                            showLine: true,
+                          },
+                        ],
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          y: {
+                            min: 1,
+                            max: 9,
+                            reverse: true, // 9 at bottom, 1 at top
+                            ticks: {
+                              stepSize: 1,
+                              color: "#18305c",
+                              font: { size: 12 },
+                            },
+                            grid: { display: false },
+                          },
+                          x: {
+                            ticks: { color: "#18305c", font: { size: 12 } },
+                            grid: { display: false },
+                          },
+                        },
+                      },
+                    });
+                  }
+                }, 200);
+              }
+            });
+          row.appendChild(col);
+        });
+      });
+
+      // Floating buttons logic
+      document.getElementById("keeper-fab").onclick = () => {
+        document.getElementById("keeper-modal").style.display = "flex";
+      };
+      document.getElementById("manual-fab").onclick = () => {
+        document.getElementById("manual-modal").style.display = "flex";
+      };
+    </script>
+  </body>
+</html>

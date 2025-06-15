@@ -1,0 +1,166 @@
+<div class="card" style="min-height: 200px">
+  <h4>🗂️ Projects</h4>
+  <div id="project-list">
+    <span style="color: #aaa">Loading projects...</span>
+  </div>
+  <button id="add-project-btn" style="margin-top: 1em">+ Add Project</button>
+</div>
+
+<!-- Sprints Modal (Popup) - (optional, can stay or remove as you wish) -->
+<div
+  id="sprints-modal"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(24, 48, 92, 0.16);
+    z-index: 40;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div
+    id="sprints-content"
+    style="
+      background: var(--lh-card, #fff);
+      border-radius: 1.5em;
+      box-shadow: 0 8px 36px #18305c44;
+      padding: 2em 2.5em;
+      max-width: 440px;
+      width: 90%;
+      margin: auto;
+      position: relative;
+    "
+  >
+    <button
+      onclick="closeSprintsModal()"
+      style="
+        position: absolute;
+        right: 1.2em;
+        top: 1em;
+        background: transparent;
+        border: none;
+        font-size: 1.5em;
+        color: #fa7268;
+        cursor: pointer;
+      "
+    >
+      ×
+    </button>
+    <div id="sprints-details"></div>
+  </div>
+</div>
+
+<script>
+  let allProjects = [];
+
+  function loadProjectListCard() {
+    fetch("http://localhost:3001/api/projects")
+      .then((res) => res.json())
+      .then((projects) => {
+        allProjects = projects;
+        renderProjects();
+      });
+  }
+
+  function renderProjects() {
+    const list = document.getElementById("project-list");
+    if (!allProjects.length) {
+      list.innerHTML = "<div style='color:#aaa'>No projects yet.</div>";
+    } else {
+      list.innerHTML = allProjects
+        .map(
+          (proj, i) => `
+      <div style="margin-bottom:1em; border-left: 4px solid #ffe066; padding-left:0.8em;">
+        <b>${proj.name}</b>
+        <span style="color:#18305c88; font-size:0.97em;">(${
+          proj.status
+        })</span><br>
+        <span style="font-size:0.96em; color:#18305ca0;">Goal:</span> <i>${
+          proj.goal
+        }</i>
+        ${
+          proj.sprints && proj.sprints.length
+            ? `
+          <div style="font-size:0.93em; color:#5fc185; margin-top:0.5em;">
+            <a href="#" onclick="showSprintsModal(${i});return false;" style="color:#5fc185;text-decoration:underline;cursor:pointer;">
+              ${proj.sprints.length} sprint(s)
+            </a>
+          </div>`
+            : ""
+        }
+      </div>
+    `
+        )
+        .join("");
+    }
+  }
+
+  document.getElementById("add-project-btn").onclick = function () {
+    const name = prompt("Project name?");
+    if (!name) return;
+    const goal = prompt("Project goal?");
+    if (goal === null) return;
+    allProjects.push({
+      id: "p" + Date.now(),
+      name,
+      goal,
+      status: "Planned",
+      sprints: [],
+    });
+    saveProjects();
+    renderProjects();
+  };
+
+  function saveProjects() {
+    fetch("http://localhost:3001/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(allProjects, null, 2),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        // Optionally, show a small confirmation, e.g.:
+        // alert("Projects saved!");
+      });
+  }
+
+  // Sprints modal logic (if you want to use/extend it)
+  function showSprintsModal(projectIdx) {
+    const project = allProjects[projectIdx];
+    const el = document.getElementById("sprints-details");
+    el.innerHTML =
+      `<h3>${project.name} – Sprints</h3>` +
+      (project.sprints && project.sprints.length
+        ? project.sprints
+            .map(
+              (sprint, i) =>
+                `<div style="margin-bottom:1em;">
+        <b>${sprint.name}</b>
+        <ul style="margin:0.5em 0 0 1.2em; color:#18305ca8;">
+          ${
+            sprint.tasks && sprint.tasks.length
+              ? sprint.tasks
+                  .map(
+                    (task) =>
+                      `<li>${task.done ? "✅" : "⬜"} ${task.title}</li>`
+                  )
+                  .join("")
+              : "<li>No tasks</li>"
+          }
+        </ul>
+      </div>`
+            )
+            .join("")
+        : "<i>No sprints yet.</i>");
+    document.getElementById("sprints-modal").style.display = "flex";
+  }
+  function closeSprintsModal() {
+    document.getElementById("sprints-modal").style.display = "none";
+  }
+
+  loadProjectListCard();
+</script>

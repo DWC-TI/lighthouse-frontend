@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lighthouse Manual</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .manual-container {
+        display: flex;
+        max-width: 1200px;
+        margin: 2rem auto;
+        background: var(--lh-card);
+      }
+      .manual-sidebar {
+        width: 260px;
+        padding: 2rem 1rem 1.5rem 1.5rem;
+        border-right: 1.5px solid #eee;
+        background: var(--lh-yellow);
+        min-height: 100vh;
+        position: sticky;
+        top: 0;
+      }
+      .manual-sidebar h3 {
+        font-size: 1.12rem;
+        margin-bottom: 0.9em;
+      }
+      .manual-sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+      .manual-sidebar li {
+        margin: 0.6em 0;
+      }
+      .manual-sidebar a {
+        color: var(--lh-blue);
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+        padding: 2px 0 2px 8px;
+        border-radius: 5px;
+        transition: background 0.14s;
+      }
+      .manual-sidebar a.active,
+      .manual-sidebar a:hover {
+        background: var(--lh-yellow-accent);
+      }
+      .manual-content {
+        flex: 1;
+        padding: 2.5rem 2rem;
+        min-height: 400px;
+      }
+      .manual-search {
+        margin-bottom: 1.5em;
+      }
+      .manual-search input {
+        width: 100%;
+        padding: 0.42em 0.9em;
+        font-size: 1.01rem;
+        border-radius: 0.8em;
+        border: 1px solid #eee;
+        box-shadow: 0 1px 7px #18305c0c;
+      }
+      @media (max-width: 900px) {
+        .manual-container {
+          flex-direction: column;
+        }
+        .manual-sidebar {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1.5px solid #eee;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="manual-container">
+      <nav class="manual-sidebar">
+        <h3>Manual Index</h3>
+        <div class="manual-search">
+          <input
+            id="manualSearch"
+            type="text"
+            placeholder="Search the manual..."
+          />
+        </div>
+        <ul id="manualIndex">
+          <li>
+            <a href="#" data-section="section0.html" class="active">Welcome</a>
+          </li>
+          <li><a href="#" data-section="section1.html">Dashboard Guide</a></li>
+          <li><a href="#" data-section="section2.html">Cards Explained</a></li>
+          <li><a href="#" data-section="section3.html">Energy & Flow</a></li>
+          <li><a href="#" data-section="section4.html">Check-In Routine</a></li>
+          <li><a href="#" data-section="section5.html">FAQ</a></li>
+        </ul>
+      </nav>
+      <main class="manual-content" id="manualContent">
+        <!-- Section content is loaded here -->
+        <div style="color: #aaa">Loading...</div>
+      </main>
+    </div>
+
+    <script>
+      // Section index and loader
+      const sectionLinks = document.querySelectorAll("#manualIndex a");
+      const manualContent = document.getElementById("manualContent");
+      let currentSection = "section0.html";
+
+      function loadSection(sectionFile) {
+        manualContent.innerHTML = '<div style="color:#aaa;">Loading...</div>';
+        fetch("manual/" + sectionFile)
+          .then((res) => res.text())
+          .then((html) => {
+            manualContent.innerHTML = html;
+          });
+        sectionLinks.forEach((link) => link.classList.remove("active"));
+        const activeLink = Array.from(sectionLinks).find(
+          (l) => l.dataset.section === sectionFile
+        );
+        if (activeLink) activeLink.classList.add("active");
+        currentSection = sectionFile;
+      }
+
+      sectionLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          loadSection(this.dataset.section);
+        });
+      });
+
+      // Load default section
+      loadSection(currentSection);
+
+      // Simple sidebar search (filters index)
+      document
+        .getElementById("manualSearch")
+        .addEventListener("input", function () {
+          const val = this.value.toLowerCase();
+          sectionLinks.forEach((link) => {
+            link.parentElement.style.display = link.textContent
+              .toLowerCase()
+              .includes(val)
+              ? ""
+              : "none";
+          });
+        });
+    </script>
+  </body>
+</html>

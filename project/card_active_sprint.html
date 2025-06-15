@@ -1,0 +1,53 @@
+<div class="card" style="min-height: 200px">
+  <h4>🔥 Active Sprint</h4>
+  <div id="active-sprint-content">
+    <span style="color: #aaa">Loading active sprint...</span>
+  </div>
+</div>
+<script>
+  fetch("project/projects.json")
+    .then((res) => res.json())
+    .then((projects) => {
+      let found = null,
+        projectName = "";
+      for (const p of projects) {
+        const active = (p.sprints || []).find((s) => s.status === "active");
+        if (active) {
+          found = active;
+          projectName = p.name;
+          break;
+        }
+      }
+      if (!found) {
+        // fallback to first sprint of first project
+        if (
+          projects.length &&
+          projects[0].sprints &&
+          projects[0].sprints.length
+        ) {
+          found = projects[0].sprints[0];
+          projectName = projects[0].name;
+        }
+      }
+      const box = document.getElementById("active-sprint-content");
+      if (found) {
+        box.innerHTML = `
+        <div style="font-weight:600; margin-bottom:0.5em;">${projectName}</div>
+        <div style="color:#18305c;font-size:1.08em;margin-bottom:0.3em;"><b>${
+          found.name
+        }</b></div>
+        <ul style="margin:0.3em 0 0 1.3em;">
+          ${
+            found.tasks && found.tasks.length
+              ? found.tasks
+                  .map((t) => `<li>${t.done ? "✅" : "⬜"} ${t.title}</li>`)
+                  .join("")
+              : `<li>No tasks in sprint.</li>`
+          }
+        </ul>
+      `;
+      } else {
+        box.innerHTML = `<i>No sprints found in your projects.</i>`;
+      }
+    });
+</script>

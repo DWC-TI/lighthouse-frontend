@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lighthouse Project Planning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .project-container {
+        max-width: 780px;
+        margin: 2rem auto;
+        background: var(--lh-card, #fff);
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 24px #18305c18;
+        padding: 2rem 2rem 2.5rem 2rem;
+      }
+      .project-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .project-header h2 {
+        margin: 0;
+      }
+      .project-list {
+        margin: 2.3em 0 1.2em 0;
+      }
+      .project-item {
+        background: var(--lh-yellow, #fff9db);
+        border-left: 7px solid var(--lh-yellow-accent, #ffdd57);
+        border-radius: 1rem;
+        margin-bottom: 1.1em;
+        padding: 1.1em 1.3em 1em 1.3em;
+        box-shadow: 0 2px 12px #18305c13;
+        transition: box-shadow 0.12s;
+      }
+      .project-item:hover {
+        box-shadow: 0 6px 24px #18305c29;
+      }
+      .project-status {
+        font-size: 0.98em;
+        color: #18305c88;
+        margin-left: 0.7em;
+      }
+      .project-goal {
+        font-size: 1.05em;
+        color: #18305cb0;
+      }
+      .project-sprints {
+        font-size: 0.97em;
+        color: #5fc185;
+        margin-top: 0.35em;
+      }
+      #add-project-btn {
+        background: var(--lh-yellow-accent, #ffdd57);
+        border: none;
+        color: var(--lh-blue, #18305c);
+        font-weight: 700;
+        border-radius: 9px;
+        padding: 0.7em 1.4em;
+        font-size: 1.08em;
+        margin-top: 1em;
+        box-shadow: 0 2px 10px #fa726822;
+        cursor: pointer;
+      }
+      #add-project-btn:hover {
+        background: var(--lh-coral, #fa7268);
+        color: #fff;
+      }
+      #new-project-form {
+        margin-top: 1.7em;
+      }
+      #new-project-form input,
+      #new-project-form select {
+        margin-bottom: 0.65em;
+        padding: 0.55em 1.2em;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        font-size: 1.07em;
+        width: 100%;
+        display: block;
+      }
+      #save-project-btn,
+      #cancel-project-btn {
+        background: var(--lh-yellow-accent, #ffdd57);
+        border: none;
+        color: var(--lh-blue, #18305c);
+        font-weight: 700;
+        border-radius: 9px;
+        padding: 0.4em 1.6em;
+        font-size: 1.03em;
+        margin-right: 1em;
+        cursor: pointer;
+      }
+      #save-project-btn:hover,
+      #cancel-project-btn:hover {
+        background: var(--lh-coral, #fa7268);
+        color: #fff;
+      }
+
+      /* Modal */
+      #sprints-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(24, 48, 92, 0.16);
+        z-index: 40;
+        align-items: center;
+        justify-content: center;
+      }
+      #sprints-content {
+        background: var(--lh-card, #fff);
+        border-radius: 1.5em;
+        box-shadow: 0 8px 36px #18305c44;
+        padding: 2em 2.5em;
+        max-width: 440px;
+        width: 90%;
+        margin: auto;
+        position: relative;
+      }
+      #sprints-content button.close-modal {
+        position: absolute;
+        right: 1.2em;
+        top: 1em;
+        background: transparent;
+        border: none;
+        font-size: 1.5em;
+        color: #fa7268;
+        cursor: pointer;
+      }
+      @media (max-width: 700px) {
+        .project-container {
+          padding: 1rem 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="project-container">
+      <div class="project-header">
+        <h2>🗂️ Project Planning</h2>
+        <button id="add-project-btn">+ Add Project</button>
+      </div>
+      <div class="project-list" id="project-list">
+        <div style="color: #aaa">Loading projects...</div>
+      </div>
+      <div id="new-project-form" style="display: none">
+        <input id="proj-name" type="text" placeholder="Project name" />
+        <input id="proj-goal" type="text" placeholder="Project goal" />
+        <select id="proj-status">
+          <option value="Planned">Planned</option>
+          <option value="Active">Active</option>
+          <option value="Done">Done</option>
+        </select>
+        <button id="save-project-btn">Save</button>
+        <button id="cancel-project-btn">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Sprints Modal -->
+    <div id="sprints-modal">
+      <div id="sprints-content">
+        <button class="close-modal" onclick="closeSprintsModal()">×</button>
+        <div id="sprints-details"></div>
+        <button id="show-add-sprint-btn" style="margin: 1em 0 0 0">
+          + Add Sprint
+        </button>
+        <div id="add-sprint-form" style="display: none">
+          <input id="sprint-name-input" type="text" placeholder="Sprint name" />
+          <button onclick="saveSprint()">Save Sprint</button>
+          <button onclick="cancelSprint()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let allProjects = [];
+      let currentProjectIdx = 0;
+
+      function loadProjects() {
+        fetch("http://localhost:3001/api/projects")
+          .then((res) => res.json())
+          .then((projects) => {
+            allProjects = projects;
+            updateProjectList();
+          })
+          .catch(() => {
+            allProjects = [];
+            updateProjectList();
+          });
+      }
+
+      function updateProjectList() {
+        const list = document.getElementById("project-list");
+        if (!allProjects.length) {
+          list.innerHTML = "<div style='color:#aaa'>No projects yet.</div>";
+        } else {
+          list.innerHTML = allProjects
+            .map(
+              (proj, i) => `
+              <div class="project-item">
+                <b>${proj.name}</b>
+                <span class="project-status">(${proj.status})</span>
+                <div class="project-goal">Goal: <i>${proj.goal}</i></div>
+                ${
+                  proj.sprints?.length
+                    ? `<div class="project-sprints"><a href="#" onclick="showSprintsModal(${i});return false;" style="color:#5fc185;text-decoration:underline;cursor:pointer;">${proj.sprints.length} sprint(s)</a></div>`
+                    : ""
+                }
+              </div>
+            `
+            )
+            .join("");
+        }
+      }
+
+      function saveProjectsToServer() {
+        fetch("http://localhost:3001/api/save-project", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(allProjects),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("Save failed");
+            console.log("✅ Project saved");
+          })
+          .catch((err) => console.error("❌ Save failed:", err));
+      }
+
+      document.getElementById("add-project-btn").onclick = () => {
+        document.getElementById("new-project-form").style.display = "";
+        document.getElementById("add-project-btn").style.display = "none";
+      };
+
+      document.getElementById("cancel-project-btn").onclick = () => {
+        document.getElementById("new-project-form").style.display = "none";
+        document.getElementById("add-project-btn").style.display = "";
+        document.getElementById("proj-name").value = "";
+        document.getElementById("proj-goal").value = "";
+        document.getElementById("proj-status").value = "Planned";
+      };
+
+      document.getElementById("save-project-btn").onclick = () => {
+        const newProject = {
+          id: "p" + Date.now(),
+          name: document.getElementById("proj-name").value,
+          goal: document.getElementById("proj-goal").value,
+          status: document.getElementById("proj-status").value,
+          sprints: [],
+        };
+
+        allProjects.push(newProject);
+        updateProjectList();
+        saveProjectsToServer();
+        document.getElementById("cancel-project-btn").click();
+      };
+
+      function showSprintsModal(projectIdx) {
+        currentProjectIdx = projectIdx;
+        const project = allProjects[projectIdx];
+        const el = document.getElementById("sprints-details");
+        el.innerHTML =
+          `<h3>${project.name} – Sprints</h3>` +
+          (project.sprints?.length
+            ? project.sprints
+                .map(
+                  (sprint) => `
+                  <div style="margin-bottom:1em;">
+                    <b>${sprint.name}</b>
+                    <ul style="margin:0.5em 0 0 1.2em; color:#18305ca8;">
+                      ${
+                        sprint.tasks?.length
+                          ? sprint.tasks
+                              .map(
+                                (task) =>
+                                  `<li>${task.done ? "✅" : "⬜"} ${
+                                    task.title
+                                  }</li>`
+                              )
+                              .join("")
+                          : "<li>No tasks</li>"
+                      }
+                    </ul>
+                  </div>`
+                )
+                .join("")
+            : "<i>No sprints yet.</i>");
+
+        document.getElementById("sprints-modal").style.display = "flex";
+        document.getElementById("add-sprint-form").style.display = "none";
+        document.getElementById("show-add-sprint-btn").style.display = "";
+        document.getElementById("sprint-name-input").value = "";
+      }
+
+      function closeSprintsModal() {
+        document.getElementById("sprints-modal").style.display = "none";
+      }
+
+      document.getElementById("show-add-sprint-btn").onclick = function () {
+        document.getElementById("add-sprint-form").style.display = "";
+        document.getElementById("show-add-sprint-btn").style.display = "none";
+        document.getElementById("sprint-name-input").value = "";
+      };
+
+      function saveSprint() {
+        const sprintName = document.getElementById("sprint-name-input").value;
+        if (!sprintName) return alert("Please enter a sprint name!");
+
+        const sprint = {
+          name: sprintName,
+          tasks: [],
+        };
+
+        allProjects[currentProjectIdx].sprints.push(sprint);
+        updateProjectList();
+        saveProjectsToServer();
+        closeSprintsModal();
+      }
+
+      function cancelSprint() {
+        document.getElementById("add-sprint-form").style.display = "none";
+        document.getElementById("show-add-sprint-btn").style.display = "";
+        document.getElementById("sprint-name-input").value = "";
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

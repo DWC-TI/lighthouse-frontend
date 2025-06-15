@@ -1,0 +1,31 @@
+[
+  {
+    "id": "p1001",
+    "name": "Test Project",
+    "goal": "Make sure the JSON loads",
+    "status": "Active",
+    "sprints": [
+      {
+        "name": "Initial Sprint",
+        "status": "active",
+        "tasks": [
+          {
+            "title": "Add autosave",
+            "done": true
+          },
+          {
+            "title": "Fix layout",
+            "done": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p1750000766777",
+    "name": "test",
+    "goal": "test",
+    "status": "Planned",
+    "sprints": []
+  }
+]

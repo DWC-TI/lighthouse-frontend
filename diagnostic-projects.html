@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Diagnostic: Lighthouse Project Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+        background: #f4f4f9;
+      }
+      .status {
+        padding: 1em;
+        border-radius: 8px;
+        font-size: 1.1em;
+        margin-bottom: 2rem;
+      }
+      .ok {
+        background: #e6ffed;
+        border: 1px solid #00aa66;
+        color: #004422;
+      }
+      .error {
+        background: #ffe6e6;
+        border: 1px solid #cc3333;
+        color: #660000;
+      }
+      .project {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fff;
+        border-left: 6px solid #ffcc00;
+        box-shadow: 0 2px 6px #00000011;
+        border-radius: 0.5rem;
+      }
+      .project h3 {
+        margin: 0 0 0.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="status" class="status">
+      ⏳ Loading project data from backend...
+    </div>
+    <div id="project-output"></div>
+
+    <script>
+      const statusEl = document.getElementById("status");
+      const outputEl = document.getElementById("project-output");
+
+      fetch("http://localhost:3001/api/projects")
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          console.log("✅ Received data:", data);
+
+          if (!Array.isArray(data) || data.length === 0) {
+            statusEl.textContent =
+              "⚠️ Loaded successfully, but no projects found.";
+            statusEl.className = "status ok";
+            return;
+          }
+
+          statusEl.textContent = `✅ Loaded ${data.length} project(s) from backend.`;
+          statusEl.className = "status ok";
+
+          // Display each project
+          outputEl.innerHTML = data
+            .map(
+              (proj) => `
+            <div class="project">
+              <h3>${proj.name}</h3>
+              <div><strong>Status:</strong> ${proj.status}</div>
+              <div><strong>Goal:</strong> ${proj.goal}</div>
+              ${
+                proj.sprints?.length
+                  ? `<div><strong>Sprints:</strong> ${proj.sprints.length}</div>`
+                  : ""
+              }
+            </div>
+          `
+            )
+            .join("");
+        })
+        .catch((err) => {
+          console.error("❌ Error fetching project data:", err);
+          statusEl.textContent =
+            "❌ Failed to load project data from http://localhost:3001/api/projects";
+          statusEl.className = "status error";
+        });
+    </script>
+  </body>
+</html>
