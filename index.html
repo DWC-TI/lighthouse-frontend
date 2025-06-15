@@ -90,14 +90,31 @@
       </div>
     </div>
 
+    <!-- ✅ Load modular menu -->
     <script>
-      // Load the menu bar
-      fetch("cards/card0.html")
+      fetch("cards/card_menu.html")
         .then((res) => res.text())
         .then((html) => {
           document.getElementById("menu-placeholder").innerHTML = html;
-        });
 
+          const path = window.location.pathname.toLowerCase();
+          const beam = document.getElementById("link-beam");
+          const consoleLink = document.getElementById("link-console");
+
+          if (path.includes("projects.html") && beam) {
+            beam.classList.add("active");
+          } else if (
+            path.includes("index.html") ||
+            path === "/" ||
+            path.endsWith("index")
+          ) {
+            consoleLink.classList.add("active");
+          }
+        })
+        .catch((err) => console.error("❌ Failed to load menu:", err));
+    </script>
+
+    <script>
       const cardLayout = [
         { row: "row1", files: ["cards/card1.html"] },
         {
@@ -139,7 +156,6 @@
               col.innerHTML = html;
               row.appendChild(col);
 
-              // ✅ Dynamically load and run all external scripts
               const temp = document.createElement("div");
               temp.innerHTML = html;
               const scripts = temp.querySelectorAll("script[src]");
@@ -151,8 +167,6 @@
               });
 
               loadedCount++;
-
-              // Optionally trigger something once all cards are loaded
               if (loadedCount === totalCount) {
                 setTimeout(() => {
                   const ctx = document.getElementById("creativeFlowChart");

@@ -1,0 +1,83 @@
+<style>
+  .menu-bar {
+    max-width: 92%;
+    margin: 2em auto;
+    padding: 1.2em 2em;
+    border-radius: 2em;
+    background: white;
+    color: #18305c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    font-family: system-ui, sans-serif;
+  }
+
+  .menu-bar .left {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-weight: 600;
+    font-size: 1.1em;
+  }
+
+  .menu-bar .left img {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .menu-bar nav {
+    display: flex;
+    gap: 2em;
+    font-size: 1em;
+  }
+
+  .menu-bar nav a {
+    text-decoration: none;
+    color: #18305c;
+    font-weight: 500;
+    position: relative;
+    transition: 0.2s ease;
+  }
+
+  .menu-bar nav a.active {
+    color: #ff6e6e;
+    font-weight: 600;
+  }
+
+  .menu-bar nav a.active::after {
+    content: "";
+    position: absolute;
+    bottom: -0.25em;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #ff6e6e;
+    border-radius: 2px;
+  }
+
+  .menu-bar .right {
+    display: flex;
+    gap: 1.2em;
+    font-size: 1.4em;
+  }
+</style>
+
+<div class="menu-bar">
+  <div class="left">
+    <img
+      src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=80&q=80"
+      alt="Lighthouse logo"
+    />
+    Lighthouse
+  </div>
+
+  <nav>
+    <a href="/index.html" id="link-console">🧭 Console</a>
+    <a href="/projects.html" id="link-beam">🔦 Beam</a>
+  </nav>
+
+  <div class="right">👤 ⚙️</div>
+</div>
