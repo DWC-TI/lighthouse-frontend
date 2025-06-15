@@ -1,31 +1,24 @@
-[
-  {
-    "id": "p1001",
-    "name": "Test Project",
-    "goal": "Make sure the JSON loads",
-    "status": "Active",
-    "sprints": [
-      {
-        "name": "Initial Sprint",
-        "status": "active",
-        "tasks": [
-          {
-            "title": "Add autosave",
-            "done": true
-          },
-          {
-            "title": "Fix layout",
-            "done": false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "p1750000766777",
-    "name": "test",
-    "goal": "test",
-    "status": "Planned",
-    "sprints": []
-  }
-]
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Beacon Hero Setup",
+      "lastUpdated": "2025-06-14T18:40:07.088691"
+    },
+    {
+      "id": 2,
+      "title": "Sprint Integration Card",
+      "lastUpdated": "2025-06-12T18:40:07.088691"
+    },
+    {
+      "id": 3,
+      "title": "Dock UI Cleanup",
+      "lastUpdated": "2025-06-10T18:40:07.088691"
+    },
+    {
+      "id": 4,
+      "title": "System Test Protocols",
+      "lastUpdated": "2025-06-05T18:40:07.088691"
+    }
+  ]
+}

@@ -114,16 +114,6 @@
         border-radius: 4px;
         font-size: 0.95em;
       }
-      @media (max-width: 500px) {
-        .status-card,
-        .sprint-card {
-          padding: 1.4rem 0.3rem 1.4rem 0.3rem;
-          max-width: 97vw;
-        }
-        .tasks-list li {
-          font-size: 0.98em;
-        }
-      }
     </style>
   </head>
   <body>
@@ -153,7 +143,7 @@
               • Frontend: <code>8080</code>
             </span>
           `;
-          const timeMatch = html.match(/Time:\s?([^\<]+)/);
+          const timeMatch = html.match(/Time:\s?([^<]+)/);
           if (timeMatch) {
             document.getElementById("servertime").innerHTML =
               "<span style='font-size:0.99em;color:#18305c99;'>Time: " +
@@ -161,28 +151,25 @@
               "</span>";
           }
 
-          // Enhanced project fetch with diagnostics
           fetch("http://localhost:3001/api/projects")
             .then(async (res) => {
-              const contentType = res.headers.get("Content-Type");
-              const status = res.status;
               const titleEl = document.getElementById("sprint-title");
               const box = document.getElementById("sprint-content");
 
               if (!res.ok) {
                 const text = await res.text();
-                titleEl.textContent = `❌ Error ${status}`;
+                titleEl.textContent = `❌ Error ${res.status}`;
                 box.innerHTML = `
                   <div class='no-sprint'>
                     Failed to fetch project data.<br>
-                    <b>Status:</b> ${status}<br>
+                    <b>Status:</b> ${res.status}<br>
                     <b>Message:</b> ${res.statusText}<br>
                     <b>Raw:</b> <code>${text.slice(0, 200)}</code>
                   </div>`;
-                console.error("❌ Response error:", text);
                 return;
               }
 
+              const contentType = res.headers.get("Content-Type");
               if (!contentType || !contentType.includes("application/json")) {
                 titleEl.textContent = "⚠️ Invalid response";
                 box.innerHTML = `
@@ -192,99 +179,61 @@
                 return;
               }
 
-              let projects;
-              try {
-                projects = await res.json();
-              } catch (jsonErr) {
-                titleEl.textContent = "❌ Invalid JSON";
-                box.innerHTML = `
-                  <div class='no-sprint'>
-                    Could not parse project data.<br>
-                    <b>Error:</b> ${jsonErr.message}
-                  </div>`;
-                console.error("❌ JSON parse error:", jsonErr);
-                return;
-              }
-
-              console.log("✅ Raw project data:", projects);
+              let raw = await res.json();
+              const projects = Array.isArray(raw) ? raw : raw.projects;
 
               if (!Array.isArray(projects)) {
                 titleEl.textContent = "⚠️ Invalid data format";
-                box.innerHTML =
-                  "<div class='no-sprint'>Could not read project data (invalid format).</div>";
+                box.innerHTML = "<div class='no-sprint'>Could not read project data (invalid format).</div>";
                 return;
               }
 
               if (!projects.length) {
                 titleEl.textContent = "⚠️ No projects found";
-                box.innerHTML =
-                  "<div class='no-sprint'>Your projects.json file is empty.</div>";
+                box.innerHTML = "<div class='no-sprint'>Your projects.json file is empty.</div>";
                 return;
               }
 
-              let found = null,
-                projectName = "";
-
+              let found = null, projectName = "";
               for (const p of projects) {
-                const active = (p.sprints || []).find(
-                  (s) => s.status === "active"
-                );
+                const active = (p.sprints || []).find(s => s.status === "active");
                 if (active) {
                   found = active;
-                  projectName = p.name;
+                  projectName = p.name || p.title;
                   break;
                 }
               }
 
-              if (!found && projects[0].sprints && projects[0].sprints.length) {
+              if (!found && projects[0].sprints?.length) {
                 found = projects[0].sprints[0];
-                projectName = projects[0].name;
+                projectName = projects[0].name || projects[0].title;
               }
 
               if (found) {
                 titleEl.textContent = "🛠️ Active Sprint";
                 box.innerHTML = `
                   <div class="project-name">${projectName}</div>
-                  <div style="color:#18305c;font-size:1.1em;margin-bottom:0.3em;"><b>${
-                    found.name
-                  }</b></div>
-                  <div class="sprint-status">${
-                    found.status === "active"
-                      ? "Currently active"
-                      : "Next sprint"
-                  }</div>
+                  <div style="color:#18305c;font-size:1.1em;margin-bottom:0.3em;"><b>${found.name || found.title}</b></div>
+                  <div class="sprint-status">${found.status === "active" ? "Currently active" : "Next sprint"}</div>
                   <ul class="tasks-list">
                     ${
                       found.tasks?.length
-                        ? found.tasks
-                            .map(
-                              (t) =>
-                                `<li>
-                                  <span class="status-dot">${
-                                    t.done ? "✅" : "⬜"
-                                  }</span>
-                                  ${t.title}
-                                </li>`
-                            )
-                            .join("")
+                        ? found.tasks.map(t => `<li><span class="status-dot">${t.done ? "✅" : "⬜"}</span>${t.title}</li>`).join("")
                         : `<li><span class="status-dot">💡</span>No tasks in sprint.</li>`
                     }
                   </ul>
                 `;
               } else {
-                titleEl.textContent = "⚠️ No sprint found";
-                box.innerHTML = `<div class='no-sprint'>No sprints found in your project list.</div>`;
+                titleEl.textContent = "📊 Project Overview (No active sprint)";
+                const rows = projects.map(p => {
+                  const updated = p.lastUpdated ? new Date(p.lastUpdated).toLocaleString() : "❓ No date";
+                  return `<li><strong>${p.title || p.name}</strong><br><small>Updated: ${updated}</small></li>`;
+                }).join("");
+                box.innerHTML = `
+                  <div class='sprint-status'>Showing ${projects.length} project(s)</div>
+                  <ul class="tasks-list">${rows}</ul>
+                `;
               }
-            })
-            .catch((err) => {
-              console.error("❌ Network or fetch error:", err);
-              document.getElementById("sprint-title").textContent =
-                "❌ Fetch failed";
-              document.getElementById("sprint-content").innerHTML = `
-                <div class='no-sprint'>
-                  Could not load project data.<br>
-                  <b>Error:</b> ${err.message}
-                </div>`;
             });
         })
         .catch(() => {
@@ -292,10 +241,8 @@
             Server not reachable!<br>
             <span style='font-size:0.98em;color:#fa7268;'>Check if Node.js server is running.</span>`;
           document.getElementById("servertime").innerHTML = "";
-          document.getElementById("sprint-title").textContent =
-            "❌ Server Down";
-          document.getElementById("sprint-content").innerHTML =
-            "<div class='no-sprint'>Could not load project data because the server is not reachable.</div>";
+          document.getElementById("sprint-title").textContent = "❌ Server Down";
+          document.getElementById("sprint-content").innerHTML = "<div class='no-sprint'>Could not load project data because the server is not reachable.</div>";
         });
     </script>
   </body>
