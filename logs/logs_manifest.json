@@ -1,9 +1,48 @@
 {
+  "project": "Lighthouse",
+  "last_updated": "2025-06-17",
   "logs": [
-    "sprints/sprint_lens-system.json",
-    "beams/lighthouse-app.log.json",
-    "decisions/2025-06-16-lens-structure.md",
-    "insights/return-point-clarity.md",
-    "changelog/index.html-changes.md"
+    {
+      "type": "structure",
+      "file": "project-structure.md",
+      "title": "📘 Core Project Structure",
+      "description": "Defines the 5 core components, naming, and visual system.",
+      "tags": ["core", "method", "system"]
+    },
+    {
+      "type": "sprint",
+      "file": "sprints/sprint_lens-system.json",
+      "title": "🧭 Sprint – Lens System",
+      "description": "Tracks progress and tasks for the lens system sprint.",
+      "tags": ["sprint", "tasks", "lens"]
+    },
+    {
+      "type": "decision",
+      "file": "decisions/2025-06-16-lens-structure.md",
+      "title": "📌 Decision – Lens Structure",
+      "description": "Finalized the lens categories and naming rules.",
+      "tags": ["decision", "lens", "structure"]
+    },
+    {
+      "type": "insight",
+      "file": "insights/return-point-clarity.md",
+      "title": "💡 Insight – Return Point Clarity",
+      "description": "Captured clarity around defining return points after check-outs.",
+      "tags": ["insight", "check-out", "flow"]
+    },
+    {
+      "type": "changelog",
+      "file": "changelog/index.html-changes.md",
+      "title": "📜 Changelog – Index.html",
+      "description": "Log of visual and layout changes in the main dashboard.",
+      "tags": ["html", "frontend", "layout"]
+    },
+    {
+      "type": "app-log",
+      "file": "beams/lighthouse-app.log.json",
+      "title": "🔦 Beam Log – Lighthouse App",
+      "description": "JSON log of Lighthouse App state and beams.",
+      "tags": ["beams", "state", "log"]
+    }
   ]
 }

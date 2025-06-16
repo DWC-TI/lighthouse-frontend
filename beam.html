@@ -1,141 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beam View</title>
+  <style>
+    body {
+      background-color: #0d1b2a;
+      color: #e0e1dd;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+    }
+    .beam-card {
+      border: 2px solid #1b263b;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      background-color: #1b263b;
+    }
+    .beam-title {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .beam-status {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+    .lens-list {
+      list-style: square;
+      padding-left: 1.5rem;
+    }
+    .error {
+      color: #ff6b6b;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="beam-output">🔄 Loading beam info...</div>
+  <script>
+    const output = document.getElementById("beam-output");
 
-<style>
-  body {
-    background-color: #0b1522;
-    color: white;
-    font-family: sans-serif;
-    padding: 20px;
-  }
-  .beam-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 24px;
-  }
-  .beam-card {
-    background: #1b2735;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  }
-  .beam-card h2 {
-    margin-top: 0;
-    font-size: 1.4em;
-    border-bottom: 2px solid #2c3e50;
-    padding-bottom: 6px;
-  }
-  .lens {
-    margin-bottom: 10px;
-  }
-</style>
-<div class='beam-grid'>
-    <div class="beam-card">
-      <h2>Maintenance</h2>
-      
-        <div class="lens" style="border-left: 4px solid #3498db; padding-left: 12px;">
-          <strong>Weekly Routines</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Inbox, bills, workspace</div>
-          <span style="font-size: 0.85em; color: #3498db;">Status: Active</span>
+    const getBeamName = () => {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("beam");
+    };
+
+    const renderBeam = (beamData, beamName) => {
+      const beam = beamData.find(b => b.beam === beamName);
+      if (!beam) {
+        output.innerHTML = '<p class="error">⚠️ Beam not found: ' + beamName + '</p>';
+        return;
+      }
+      output.innerHTML = `
+        <div class="beam-card">
+          <div class="beam-title">${beam.beam}</div>
+          <div class="beam-status">Status: ${beam.status}</div>
+          <div><strong>Lenses:</strong></div>
+          <ul class="lens-list">
+            ${beam.lenses.map(l => `<li>${l}</li>`).join("")}
+          </ul>
         </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #f1c40f; padding-left: 12px;">
-          <strong>Seasonal Checkups</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Health, taxes, dentist</div>
-          <span style="font-size: 0.85em; color: #f1c40f;">Status: Upcoming</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #95a5a6; padding-left: 12px;">
-          <strong>Home Admin Systems</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Budgeting, automation</div>
-          <span style="font-size: 0.85em; color: #95a5a6;">Status: Future</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-    </div>
-    
-    <div class="beam-card">
-      <h2>Lighthouse App</h2>
-      
-        <div class="lens" style="border-left: 4px solid #2ecc71; padding-left: 12px;">
-          <strong>Layout Engine</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Card structure, dynamic loading</div>
-          <span style="font-size: 0.85em; color: #2ecc71;">Status: Done</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #3498db; padding-left: 12px;">
-          <strong>Sprint Tracker</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Visual matrix + signal logic</div>
-          <span style="font-size: 0.85em; color: #3498db;">Status: Active</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #f1c40f; padding-left: 12px;">
-          <strong>LighthouseGPT Assistant</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">User-facing flow + memory</div>
-          <span style="font-size: 0.85em; color: #f1c40f;">Status: Upcoming</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #95a5a6; padding-left: 12px;">
-          <strong>SaaS Layer</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Pricing, login, team accounts</div>
-          <span style="font-size: 0.85em; color: #95a5a6;">Status: Future</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-    </div>
-    
-    <div class="beam-card">
-      <h2>De Weerdt Consulting</h2>
-      
-        <div class="lens" style="border-left: 4px solid #3498db; padding-left: 12px;">
-          <strong>Consulting Stack</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">One-pager, strategy, offers</div>
-          <span style="font-size: 0.85em; color: #3498db;">Status: Active</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #f1c40f; padding-left: 12px;">
-          <strong>Client Templates</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Notion export, onboarding</div>
-          <span style="font-size: 0.85em; color: #f1c40f;">Status: Upcoming</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #95a5a6; padding-left: 12px;">
-          <strong>Website & Authority</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Landing page, method story</div>
-          <span style="font-size: 0.85em; color: #95a5a6;">Status: Future</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-    </div>
-    
-    <div class="beam-card">
-      <h2>Bathroom Redesign</h2>
-      
-        <div class="lens" style="border-left: 4px solid #2ecc71; padding-left: 12px;">
-          <strong>Moodboard & Style</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Finalized visual direction</div>
-          <span style="font-size: 0.85em; color: #2ecc71;">Status: Done</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #3498db; padding-left: 12px;">
-          <strong>Layout Concepts</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Compare layout v2 and v3</div>
-          <span style="font-size: 0.85em; color: #3498db;">Status: Active</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-        <div class="lens" style="border-left: 4px solid #95a5a6; padding-left: 12px;">
-          <strong>Product Sheet</strong>
-          <div style="font-size: 0.9em; color: #bdc3c7;">Fixtures, tiles, brands</div>
-          <span style="font-size: 0.85em; color: #95a5a6;">Status: Future</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #2c3e50; margin: 10px 0;">
-        
-    </div>
-    </div>
+      `;
+    };
+
+    const loadBeamData = async () => {
+      const beamName = getBeamName();
+      if (!beamName) {
+        output.innerHTML = '<p class="error">⚠️ No beam specified in the URL. Try ?beam=Lighthouse App</p>';
+        return;
+      }
+
+      try {
+        const githubRes = await fetch("https://raw.githubusercontent.com/DWC-TI/lighthouse-frontend/main/data/beams.json");
+        if (!githubRes.ok) throw new Error("GitHub fetch failed");
+        const data = await githubRes.json();
+        renderBeam(data, beamName);
+      } catch (e) {
+        try {
+          const localRes = await fetch("./data/beams.json");
+          if (!localRes.ok) throw new Error("Local fetch failed");
+          const data = await localRes.json();
+          renderBeam(data, beamName);
+        } catch (err) {
+          output.innerHTML = '<p class="error">❌ Could not load beam data from GitHub or local.</p>';
+        }
+      }
+    };
+
+    loadBeamData();
+  </script>
+</body>
+</html>
