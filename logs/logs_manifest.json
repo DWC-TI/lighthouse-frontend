@@ -1,0 +1,9 @@
+{
+  "logs": [
+    "sprints/sprint_lens-system.json",
+    "beams/lighthouse-app.log.json",
+    "decisions/2025-06-16-lens-structure.md",
+    "insights/return-point-clarity.md",
+    "changelog/index.html-changes.md"
+  ]
+}

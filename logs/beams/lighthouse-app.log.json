@@ -1,0 +1,17 @@
+{
+  "beam": "Lighthouse App",
+  "log": [
+    {
+      "date": "2025-06-16",
+      "event": "Defined beam structure and started lens breakout"
+    },
+    {
+      "date": "2025-06-16",
+      "event": "Created beam.html overview"
+    },
+    {
+      "date": "2025-06-16",
+      "event": "Decided to move toward dynamic beam.html with ?beam= param"
+    }
+  ]
+}
