@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>🧭 Projects in Motion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        background: #0e1d36;
+        font-family: system-ui, sans-serif;
+        padding: 0;
+        margin: 0;
+        color: #fff;
+      }
+
+      #menu-placeholder {
+        margin-bottom: 2em;
+      }
+
+      main {
+        padding: 2em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+        color: #fff;
+        margin-bottom: 1.5em;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2em;
+      }
+
+      .card {
+        background: #ffffff10;
+        border-radius: 1em;
+        padding: 1.2em 1.5em;
+        box-shadow: 0 2px 6px #00000044;
+        border-left: 6px solid var(--zone-color);
+      }
+
+      .card h2 {
+        font-size: 1.1em;
+        color: #fff;
+        margin-bottom: 0.3em;
+      }
+
+      .zone {
+        font-size: 0.85em;
+        color: #ccc;
+        margin-bottom: 0.8em;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      .green {
+        background-color: #5fc185;
+      }
+      .yellow {
+        background-color: #ffe066;
+      }
+      .red {
+        background-color: #fa7268;
+      }
+      .purple {
+        background-color: #9c8fff;
+      }
+
+      ul {
+        list-style-type: none;
+        padding-left: 1em;
+        margin: 0;
+      }
+
+      ul li {
+        margin-bottom: 0.4em;
+        font-size: 0.95em;
+      }
+
+      li.done {
+        color: #aaa;
+        text-decoration: line-through;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 🌊 Top menu placeholder -->
+    <div id="menu-placeholder"></div>
+
+    <main>
+      <h1>🧭 Projects in Motion</h1>
+
+      <div class="grid">
+        <div class="card" style="--zone-color: #ffe066">
+          <h2>🛠️ Maintenance</h2>
+          <div class="zone">
+            <span class="dot yellow"></span> Tide Pulling In
+          </div>
+          <ul>
+            <li>☐ Clean workspace</li>
+            <li>☐ Email follow-ups</li>
+            <li class="done">✅ Weekly reset</li>
+          </ul>
+        </div>
+
+        <div class="card" style="--zone-color: #5fc185">
+          <h2>💡 Lighthouse App</h2>
+          <div class="zone">
+            <span class="dot green"></span> Current Engaged
+          </div>
+          <ul>
+            <li>☐ Card 13 layout</li>
+            <li>☐ Sprint matrix preview</li>
+            <li class="done">✅ Dynamic script loader fixed</li>
+          </ul>
+        </div>
+
+        <div class="card" style="--zone-color: #fa7268">
+          <h2>🏢 De Weerdt Consulting</h2>
+          <div class="zone">
+            <span class="dot red"></span> Drifted Off Course
+          </div>
+          <ul>
+            <li>☐ One-pager consulting stack</li>
+            <li>☐ Notion template export</li>
+          </ul>
+        </div>
+
+        <div class="card" style="--zone-color: #9c8fff">
+          <h2>🚿 Bathroom Redesign</h2>
+          <div class="zone">
+            <span class="dot purple"></span> Course Realigned
+          </div>
+          <ul>
+            <li>☐ Compare layout v2 vs v3</li>
+            <li class="done">✅ Moodboard finalized</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <!-- ✅ Inline script to load menu and highlight 'beam' as active -->
+    <script>
+      fetch("cards/card_menu.html")
+        .then((res) => res.text())
+        .then((html) => {
+          const menuEl = document.getElementById("menu-placeholder");
+          menuEl.innerHTML = html;
+
+          function highlightMenu() {
+            const path = window.location.pathname.toLowerCase();
+            const beam = document.getElementById("link-beam");
+            const consoleLink = document.getElementById("link-console");
+
+            if (path.includes("projects.html") && beam) {
+              beam.classList.add("active");
+            } else if (
+              (path.includes("index.html") || path === "/" || path === "") &&
+              consoleLink
+            ) {
+              consoleLink.classList.add("active");
+            } else {
+              requestAnimationFrame(highlightMenu);
+            }
+          }
+
+          requestAnimationFrame(highlightMenu);
+        })
+        .catch((err) => console.error("❌ Failed to load menu:", err));
+    </script>
+  </body>
+</html>

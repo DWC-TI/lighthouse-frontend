@@ -1,56 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>🧭 Projects in Motion</title>
+    <meta charset="utf-8" />
+    <title>Lighthouse Beam – Projects</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+
     <style>
       body {
-        background: #0e1d36;
-        font-family: system-ui, sans-serif;
-        padding: 0;
-        margin: 0;
+        background-color: #0e1d36;
         color: #fff;
+        font-family: "Segoe UI", sans-serif;
       }
 
-      #menu-placeholder {
-        margin-bottom: 2em;
+      .dashboard-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+        gap: 2rem;
+        justify-content: space-between;
       }
 
-      main {
-        padding: 2em;
-      }
-
-      h1 {
-        font-size: 1.8em;
-        color: #fff;
-        margin-bottom: 1.5em;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2em;
+      .col-6 {
+        flex: 0 0 calc(50% - 1rem);
+        box-sizing: border-box;
       }
 
       .card {
-        background: #ffffff10;
-        border-radius: 1em;
-        padding: 1.2em 1.5em;
-        box-shadow: 0 2px 6px #00000044;
-        border-left: 6px solid var(--zone-color);
+        background: #1a2a47;
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-left: 8px solid #ffffff33;
+        transition: border-color 0.3s ease;
       }
 
-      .card h2 {
-        font-size: 1.1em;
+      .card[data-status="yellow"] {
+        border-left-color: #ffe066;
+      }
+      .card[data-status="green"] {
+        border-left-color: #5fc185;
+      }
+      .card[data-status="red"] {
+        border-left-color: #fa7268;
+      }
+      .card[data-status="purple"] {
+        border-left-color: #9c8fff;
+      }
+
+      .card h3 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
         color: #fff;
-        margin-bottom: 0.3em;
       }
 
-      .zone {
-        font-size: 0.85em;
-        color: #ccc;
-        margin-bottom: 0.8em;
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        font-weight: 500;
+        font-size: 0.95rem;
+        margin-bottom: 1em;
+        color: #cbd5e1;
       }
 
       .dot {
@@ -58,123 +70,117 @@
         height: 10px;
         border-radius: 50%;
         display: inline-block;
-        margin-right: 6px;
       }
 
-      .green {
-        background-color: #5fc185;
-      }
-      .yellow {
+      .dot.yellow {
         background-color: #ffe066;
       }
-      .red {
+      .dot.green {
+        background-color: #5fc185;
+      }
+      .dot.red {
         background-color: #fa7268;
       }
-      .purple {
+      .dot.purple {
         background-color: #9c8fff;
       }
 
-      ul {
-        list-style-type: none;
-        padding-left: 1em;
+      .card ul {
+        list-style: none;
+        padding-left: 0;
         margin: 0;
       }
 
-      ul li {
-        margin-bottom: 0.4em;
-        font-size: 0.95em;
+      .card ul li {
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
       }
 
-      li.done {
-        color: #aaa;
+      .card ul li.done {
+        color: #8fa0b8;
         text-decoration: line-through;
       }
     </style>
   </head>
+
   <body>
-    <!-- 🌊 Top menu placeholder -->
     <div id="menu-placeholder"></div>
 
-    <main>
-      <h1>🧭 Projects in Motion</h1>
-
-      <div class="grid">
-        <div class="card" style="--zone-color: #ffe066">
-          <h2>🛠️ Maintenance</h2>
-          <div class="zone">
-            <span class="dot yellow"></span> Tide Pulling In
-          </div>
-          <ul>
-            <li>☐ Clean workspace</li>
-            <li>☐ Email follow-ups</li>
-            <li class="done">✅ Weekly reset</li>
-          </ul>
-        </div>
-
-        <div class="card" style="--zone-color: #5fc185">
-          <h2>💡 Lighthouse App</h2>
-          <div class="zone">
-            <span class="dot green"></span> Current Engaged
-          </div>
-          <ul>
-            <li>☐ Card 13 layout</li>
-            <li>☐ Sprint matrix preview</li>
-            <li class="done">✅ Dynamic script loader fixed</li>
-          </ul>
-        </div>
-
-        <div class="card" style="--zone-color: #fa7268">
-          <h2>🏢 De Weerdt Consulting</h2>
-          <div class="zone">
-            <span class="dot red"></span> Drifted Off Course
-          </div>
-          <ul>
-            <li>☐ One-pager consulting stack</li>
-            <li>☐ Notion template export</li>
-          </ul>
-        </div>
-
-        <div class="card" style="--zone-color: #9c8fff">
-          <h2>🚿 Bathroom Redesign</h2>
-          <div class="zone">
-            <span class="dot purple"></span> Course Realigned
-          </div>
-          <ul>
-            <li>☐ Compare layout v2 vs v3</li>
-            <li class="done">✅ Moodboard finalized</li>
-          </ul>
-        </div>
-      </div>
+    <main class="main">
+      <h1 style="font-size: 1.6rem; margin-bottom: 1.5rem">
+        🧭 Projects in Motion
+      </h1>
+      <div class="dashboard-row" id="row1"></div>
+      <div class="dashboard-row" id="row2"></div>
     </main>
 
-    <!-- ✅ Inline script to load menu and highlight 'beam' as active -->
+    <!-- Load modular menu -->
     <script>
       fetch("cards/card_menu.html")
         .then((res) => res.text())
         .then((html) => {
-          const menuEl = document.getElementById("menu-placeholder");
-          menuEl.innerHTML = html;
+          document.getElementById("menu-placeholder").innerHTML = html;
 
-          function highlightMenu() {
-            const path = window.location.pathname.toLowerCase();
-            const beam = document.getElementById("link-beam");
-            const consoleLink = document.getElementById("link-console");
+          const path = window.location.pathname.toLowerCase();
+          const beam = document.getElementById("link-beam");
+          const consoleLink = document.getElementById("link-console");
 
-            if (path.includes("projects.html") && beam) {
-              beam.classList.add("active");
-            } else if (
-              (path.includes("index.html") || path === "/" || path === "") &&
-              consoleLink
-            ) {
-              consoleLink.classList.add("active");
-            } else {
-              requestAnimationFrame(highlightMenu);
-            }
+          if (path.includes("projects.html") && beam) {
+            beam.classList.add("active");
+          } else if (
+            path.includes("index.html") ||
+            path === "/" ||
+            path.endsWith("index")
+          ) {
+            consoleLink.classList.add("active");
           }
+        });
+    </script>
 
-          requestAnimationFrame(highlightMenu);
-        })
-        .catch((err) => console.error("❌ Failed to load menu:", err));
+    <!-- Load project cards in stable order -->
+    <script>
+      const projectCards = [
+        {
+          row: "row1",
+          files: [
+            { file: "cards/projects/card_project1.html", status: "yellow" },
+            { file: "cards/projects/card_project3.html", status: "red" },
+          ],
+        },
+        {
+          row: "row2",
+          files: [
+            { file: "cards/projects/card_project2.html", status: "green" },
+            { file: "cards/projects/card_project4.html", status: "purple" },
+          ],
+        },
+      ];
+
+      projectCards.forEach((section) => {
+        const row = document.getElementById(section.row);
+
+        const fetches = section.files.map(({ file }) =>
+          fetch(file).then((res) => res.text())
+        );
+
+        Promise.all(fetches).then((htmlBlocks) => {
+          htmlBlocks.forEach((html, index) => {
+            const col = document.createElement("div");
+            col.className = "col-6";
+
+            const temp = document.createElement("div");
+            temp.innerHTML = html;
+
+            const card = temp.querySelector(".card");
+            if (card) {
+              card.setAttribute("data-status", section.files[index].status);
+            }
+
+            col.innerHTML = temp.innerHTML;
+            row.appendChild(col);
+          });
+        });
+      });
     </script>
   </body>
 </html>
