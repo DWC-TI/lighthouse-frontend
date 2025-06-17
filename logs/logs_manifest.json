@@ -1,48 +1,24 @@
 {
-  "project": "Lighthouse",
-  "last_updated": "2025-06-17",
   "logs": [
     {
-      "type": "structure",
-      "file": "project-structure.md",
-      "title": "📘 Core Project Structure",
-      "description": "Defines the 5 core components, naming, and visual system.",
-      "tags": ["core", "method", "system"]
+      "title": "startup 2025 06 17 0109",
+      "date": "2025-06-16T23:48:58.347Z",
+      "path": "logs/system/startup-2025-06-17_0109.log"
     },
     {
-      "type": "sprint",
-      "file": "sprints/sprint_lens-system.json",
-      "title": "🧭 Sprint – Lens System",
-      "description": "Tracks progress and tasks for the lens system sprint.",
-      "tags": ["sprint", "tasks", "lens"]
+      "title": "startup 2025 06 17 0308",
+      "date": "2025-06-17T01:08:48.622Z",
+      "path": "logs/system/startup-2025-06-17_0308.log"
     },
     {
-      "type": "decision",
-      "file": "decisions/2025-06-16-lens-structure.md",
-      "title": "📌 Decision – Lens Structure",
-      "description": "Finalized the lens categories and naming rules.",
-      "tags": ["decision", "lens", "structure"]
+      "title": "startup 2025 06 17 0317",
+      "date": "2025-06-17T01:17:13.931Z",
+      "path": "logs/system/startup-2025-06-17_0317.log"
     },
     {
-      "type": "insight",
-      "file": "insights/return-point-clarity.md",
-      "title": "💡 Insight – Return Point Clarity",
-      "description": "Captured clarity around defining return points after check-outs.",
-      "tags": ["insight", "check-out", "flow"]
-    },
-    {
-      "type": "changelog",
-      "file": "changelog/index.html-changes.md",
-      "title": "📜 Changelog – Index.html",
-      "description": "Log of visual and layout changes in the main dashboard.",
-      "tags": ["html", "frontend", "layout"]
-    },
-    {
-      "type": "app-log",
-      "file": "beams/lighthouse-app.log.json",
-      "title": "🔦 Beam Log – Lighthouse App",
-      "description": "JSON log of Lighthouse App state and beams.",
-      "tags": ["beams", "state", "log"]
+      "title": "startup 2025 06 17 0318",
+      "date": "2025-06-17T01:18:41.771Z",
+      "path": "logs/system/startup-2025-06-17_0318.log"
     }
   ]
 }

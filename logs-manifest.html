@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>🗂️ Logs Manifest Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        background: #f7f9fc;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 2rem;
+        color: #222;
+      }
+      h1 {
+        color: #375a7f;
+        margin-bottom: 1.5rem;
+      }
+      .log-entry {
+        background: #fff;
+        border: 1px solid #d3dbe4;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px #00000008;
+      }
+      .log-entry h2 {
+        font-size: 1rem;
+        margin: 0 0 0.3rem;
+      }
+      .log-entry small {
+        color: #555;
+      }
+      .log-entry a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .log-entry a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🗂️ Lighthouse Logs Manifest</h1>
+    <div id="logList">Loading...</div>
+
+    <script>
+      fetch("/logs/logs_manifest.json")
+        .then((res) => {
+          if (!res.ok) throw new Error("Manifest not found");
+          return res.json();
+        })
+        .then((data) => {
+          const logList = document.getElementById("logList");
+          if (!Array.isArray(data.logs) || data.logs.length === 0) {
+            logList.innerHTML = "<p>No logs found in manifest.</p>";
+            return;
+          }
+
+          logList.innerHTML = data.logs
+            .map(
+              (log) => `
+          <div class="log-entry">
+            <h2>🏷️ ${log.tag || "Untitled Log"}</h2>
+            <small>🗓️ ${log.date || "No date"}</small><br />
+            <a href="${log.path}" target="_blank">📂 View Log File</a>
+          </div>
+        `
+            )
+            .join("");
+        })
+        .catch((err) => {
+          document.getElementById(
+            "logList"
+          ).innerHTML = `<p style="color:red">❌ Error loading manifest: ${err.message}</p>`;
+        });
+    </script>
+  </body>
+</html>

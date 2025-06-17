@@ -2,301 +2,163 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Lighthouse Server Status</title>
+    <title>Lighthouse Project Test (GitHub + Fallback)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css" />
     <style>
       body {
-        background: linear-gradient(160deg, #f6f8fa 70%, #e9e6e0 100%);
-        color: #18305c;
-        font-family: "Inter", Arial, sans-serif;
-        text-align: center;
+        background: #f7f9fc;
+        font-family: sans-serif;
         margin: 0;
-        padding: 0;
+        padding: 2rem;
+        text-align: center;
+        color: #18305c;
       }
-      .status-card,
-      .sprint-card {
-        margin: 60px auto 0 auto;
-        background: var(--lh-card, #fffbe7);
-        border-radius: 2rem;
-        box-shadow: 0 4px 24px #18305c18;
-        padding: 2.3rem 2rem 2rem 2rem;
-        max-width: 440px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      .card {
+        background: #fffbe7;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        max-width: 500px;
+        margin: 1.5rem auto;
+        box-shadow: 0 4px 16px #00000011;
         border: 2px solid #ffe066;
       }
-      .sprint-card {
-        margin-top: 36px;
-        padding-top: 1.7rem;
-        padding-bottom: 1.5rem;
-      }
-      .lighthouse-emoji {
-        font-size: 3.6em;
-        margin-bottom: 0.4em;
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.3rem;
+        color: #fa7268;
       }
       .status-ok {
         color: #24a17c;
         font-weight: bold;
-        font-size: 1.22em;
-        margin-bottom: 0.7em;
       }
-      .dashboard-link {
-        display: inline-block;
-        margin-top: 2em;
-        color: #18305c;
-        font-weight: 600;
-        font-size: 1.11em;
-        text-decoration: none;
-        border-bottom: 1px solid #ffe066;
-        padding-bottom: 3px;
-        transition: color 0.15s;
-      }
-      .dashboard-link:hover {
-        color: #fa7268;
-      }
-      .sprint-title {
-        font-weight: 700;
-        margin-bottom: 0.35em;
-        font-size: 1.17em;
-        color: #fa7268;
-        letter-spacing: 0.01em;
-      }
-      .project-name {
-        font-weight: 600;
-        font-size: 1em;
-        color: #18305cbb;
-        margin-bottom: 0.1em;
-      }
-      .tasks-list {
-        margin: 0.6em 0 0 0;
-        padding: 0;
-        list-style: none;
+      .log-box {
+        background: #111;
+        color: #0f0;
+        font-family: monospace;
         text-align: left;
-        width: 100%;
-        max-width: 320px;
-        margin-left: auto;
-        margin-right: auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        max-height: 300px;
       }
-      .tasks-list li {
-        background: #f8f7ee;
-        margin-bottom: 0.45em;
-        border-radius: 0.7em;
-        padding: 0.45em 1em 0.45em 0.8em;
-        color: #18305ca8;
-        font-size: 1.01em;
-        box-shadow: 0 1px 4px #fa726822;
-        display: flex;
-        align-items: center;
-      }
-      .tasks-list li .status-dot {
-        display: inline-block;
-        width: 1em;
-        margin-right: 0.6em;
-        font-size: 1.1em;
-      }
-      .sprint-status {
-        color: #24a17c;
-        font-size: 0.97em;
-        font-weight: 500;
-        margin-bottom: 0.4em;
-      }
-      .no-sprint {
-        color: #fa7268;
-        font-size: 1.05em;
-        margin-top: 0.7em;
-        font-weight: 500;
+      .toggle {
+        margin-top: 1rem;
+        font-size: 0.95rem;
       }
       code {
-        background: #f0f0f0;
-        padding: 2px 4px;
+        background: #eee;
+        padding: 2px 6px;
         border-radius: 4px;
-        font-size: 0.95em;
-      }
-      @media (max-width: 500px) {
-        .status-card,
-        .sprint-card {
-          padding: 1.4rem 0.3rem 1.4rem 0.3rem;
-          max-width: 97vw;
-        }
-        .tasks-list li {
-          font-size: 0.98em;
-        }
+        font-size: 0.9em;
       }
     </style>
   </head>
   <body>
-    <div class="status-card">
-      <div class="lighthouse-emoji">🚦🏠</div>
-      <div class="status-ok" id="status">Checking server status…</div>
-      <div id="servertime"></div>
-      <a href="index.html" class="dashboard-link">← Back to Dashboard</a>
+    <div class="card">
+      <h2>🚦 Server Status</h2>
+      <div class="status-ok">Server is assumed UP 🟢</div>
+      <p>
+        Backend at <code>localhost:3001</code><br />
+        Frontend at <code>localhost:8080</code>
+      </p>
     </div>
 
-    <div class="sprint-card">
-      <div class="sprint-title" id="sprint-title">Checking project data…</div>
-      <div id="sprint-content">
-        <span style="color: #aaa">Please wait…</span>
+    <div class="card">
+      <h2>📂 Projects</h2>
+      <div id="projects">🟡 Loading…</div>
+      <div
+        id="source-label"
+        style="margin-top: 1rem; font-size: 0.85rem; color: #666"
+      ></div>
+      <div class="toggle">
+        <label>
+          <input type="checkbox" id="failToggle" />
+          Simulate GitHub failure (fallback to local)
+        </label>
       </div>
     </div>
 
+    <div class="card">
+      <h2>🛠️ Debug Log</h2>
+      <div id="log" class="log-box">Waiting for response...</div>
+    </div>
+
     <script>
-      fetch("http://localhost:3001/status")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("status").innerHTML = `
-            Server is UP and running 🟢<br>
-            <span style="font-size:0.92em;color:#18305c99;">
-              Active ports:<br>
-              • Backend: <code>3001</code><br>
-              • Frontend: <code>8080</code>
-            </span>
-          `;
-          const timeMatch = html.match(/Time:\s?([^\<]+)/);
-          if (timeMatch) {
-            document.getElementById("servertime").innerHTML =
-              "<span style='font-size:0.99em;color:#18305c99;'>Time: " +
-              timeMatch[1] +
-              "</span>";
-          }
+      const logBox = document.getElementById("log");
+      const log = (...lines) => {
+        logBox.textContent = lines
+          .map((l) => (typeof l === "object" ? JSON.stringify(l, null, 2) : l))
+          .join("\n\n");
+      };
 
-          // Enhanced project fetch with diagnostics
-          fetch("http://localhost:3001/api/projects")
-            .then(async (res) => {
-              const contentType = res.headers.get("Content-Type");
-              const status = res.status;
-              const titleEl = document.getElementById("sprint-title");
-              const box = document.getElementById("sprint-content");
+      const displayProjects = (projects, sourceURL) => {
+        if (!projects || !projects.length) {
+          document.getElementById("projects").textContent =
+            "No projects found.";
+          return;
+        }
+        const html = projects
+          .map(
+            (p) => `
+              <div>
+                🗂️ <b>${p.title}</b><br>
+                <small>${new Date(p.lastUpdated).toLocaleString()}</small>
+              </div>
+            `
+          )
+          .join("<hr>");
+        document.getElementById("projects").innerHTML = html;
+        document.getElementById(
+          "source-label"
+        ).innerHTML = `📄 Loaded from: <code>${sourceURL}</code>`;
+      };
 
-              if (!res.ok) {
-                const text = await res.text();
-                titleEl.textContent = `❌ Error ${status}`;
-                box.innerHTML = `
-                  <div class='no-sprint'>
-                    Failed to fetch project data.<br>
-                    <b>Status:</b> ${status}<br>
-                    <b>Message:</b> ${res.statusText}<br>
-                    <b>Raw:</b> <code>${text.slice(0, 200)}</code>
-                  </div>`;
-                console.error("❌ Response error:", text);
-                return;
-              }
-
-              if (!contentType || !contentType.includes("application/json")) {
-                titleEl.textContent = "⚠️ Invalid response";
-                box.innerHTML = `
-                  <div class='no-sprint'>
-                    Expected JSON but got: <code>${contentType || "none"}</code>
-                  </div>`;
-                return;
-              }
-
-              let projects;
-              try {
-                projects = await res.json();
-              } catch (jsonErr) {
-                titleEl.textContent = "❌ Invalid JSON";
-                box.innerHTML = `
-                  <div class='no-sprint'>
-                    Could not parse project data.<br>
-                    <b>Error:</b> ${jsonErr.message}
-                  </div>`;
-                console.error("❌ JSON parse error:", jsonErr);
-                return;
-              }
-
-              console.log("✅ Raw project data:", projects);
-
-              if (!Array.isArray(projects)) {
-                titleEl.textContent = "⚠️ Invalid data format";
-                box.innerHTML =
-                  "<div class='no-sprint'>Could not read project data (invalid format).</div>";
-                return;
-              }
-
-              if (!projects.length) {
-                titleEl.textContent = "⚠️ No projects found";
-                box.innerHTML =
-                  "<div class='no-sprint'>Your projects.json file is empty.</div>";
-                return;
-              }
-
-              let found = null,
-                projectName = "";
-
-              for (const p of projects) {
-                const active = (p.sprints || []).find(
-                  (s) => s.status === "active"
-                );
-                if (active) {
-                  found = active;
-                  projectName = p.name;
-                  break;
-                }
-              }
-
-              if (!found && projects[0].sprints && projects[0].sprints.length) {
-                found = projects[0].sprints[0];
-                projectName = projects[0].name;
-              }
-
-              if (found) {
-                titleEl.textContent = "🛠️ Active Sprint";
-                box.innerHTML = `
-                  <div class="project-name">${projectName}</div>
-                  <div style="color:#18305c;font-size:1.1em;margin-bottom:0.3em;"><b>${
-                    found.name
-                  }</b></div>
-                  <div class="sprint-status">${
-                    found.status === "active"
-                      ? "Currently active"
-                      : "Next sprint"
-                  }</div>
-                  <ul class="tasks-list">
-                    ${
-                      found.tasks?.length
-                        ? found.tasks
-                            .map(
-                              (t) =>
-                                `<li>
-                                  <span class="status-dot">${
-                                    t.done ? "✅" : "⬜"
-                                  }</span>
-                                  ${t.title}
-                                </li>`
-                            )
-                            .join("")
-                        : `<li><span class="status-dot">💡</span>No tasks in sprint.</li>`
-                    }
-                  </ul>
-                `;
-              } else {
-                titleEl.textContent = "⚠️ No sprint found";
-                box.innerHTML = `<div class='no-sprint'>No sprints found in your project list.</div>`;
-              }
-            })
-            .catch((err) => {
-              console.error("❌ Network or fetch error:", err);
-              document.getElementById("sprint-title").textContent =
-                "❌ Fetch failed";
-              document.getElementById("sprint-content").innerHTML = `
-                <div class='no-sprint'>
-                  Could not load project data.<br>
-                  <b>Error:</b> ${err.message}
-                </div>`;
-            });
-        })
-        .catch(() => {
-          document.getElementById("status").innerHTML = `
-            Server not reachable!<br>
-            <span style='font-size:0.98em;color:#fa7268;'>Check if Node.js server is running.</span>`;
-          document.getElementById("servertime").innerHTML = "";
-          document.getElementById("sprint-title").textContent =
-            "❌ Server Down";
-          document.getElementById("sprint-content").innerHTML =
-            "<div class='no-sprint'>Could not load project data because the server is not reachable.</div>";
+      const loadFrom = (url, label) =>
+        fetch(url).then((res) => {
+          if (!res.ok)
+            throw new Error(`Fetch failed from ${label} (${res.status})`);
+          return res.json();
         });
+
+      function loadData() {
+        document.getElementById("projects").textContent = "🟡 Loading…";
+        document.getElementById("source-label").textContent = "";
+
+        const simulateFail = document.getElementById("failToggle").checked;
+        const githubURL = simulateFail
+          ? "https://raw.githubusercontent.com/DWC-TI/lighthouse-frontend/main/data/DOES_NOT_EXIST.json"
+          : "https://raw.githubusercontent.com/DWC-TI/lighthouse-frontend/main/data/projects.json";
+        const localURL = "/data/projects.json";
+
+        loadFrom(githubURL, "GitHub")
+          .then((data) => {
+            log("✅ Loaded from GitHub", data);
+            displayProjects(data.projects, githubURL);
+          })
+          .catch((err) => {
+            log("⚠️ GitHub fetch failed, falling back to local:", err.message);
+            return loadFrom(localURL, "Local").then((data) => {
+              log("✅ Loaded from local file", data);
+              displayProjects(data.projects, localURL);
+            });
+          })
+          .catch((err) => {
+            document.getElementById(
+              "projects"
+            ).innerHTML = `<b style="color:red">❌ Failed to load from all sources</b>`;
+            document.getElementById("source-label").innerHTML = "";
+            log("❌ Final fetch error", err.message);
+          });
+      }
+
+      document
+        .getElementById("failToggle")
+        .addEventListener("change", loadData);
+      loadData(); // initial
+
+      // 🔁 Auto-refresh every 5 seconds
+      setInterval(loadData, 5000);
     </script>
   </body>
 </html>
