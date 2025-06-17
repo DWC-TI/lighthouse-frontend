@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "🔦 Starting Lighthouse Project..."
+
 # 🔪 Kill any previous servers on 8080 or 3001
 lsof -ti tcp:8080 | xargs kill -9 2>/dev/null
 lsof -ti tcp:3001 | xargs kill -9 2>/dev/null
@@ -19,6 +21,15 @@ echo "🧾 Updating logs manifest..."
 /usr/local/bin/node scripts/updateLogsManifest.js
 echo "✅ logs_manifest.json updated."
 
+# ✅ Optional folder structure check
+if [ "$1" == "--check" ]; then
+  echo "🔍 Running folder structure check..."
+  /usr/local/bin/node scripts/check-folder-structure.js
+  echo "📋 Structure check complete."
+else
+  echo "✅ Skipping folder structure check (no --check flag)."
+fi
+
 # 🌍 Start Python HTTP frontend server on port 8080
 echo "📂 Switching to frontend dir: $(pwd)"
 echo "🌍 Starting Python HTTP server on port 8080..."
@@ -37,7 +48,7 @@ tell application "Google Chrome"
         make new tab with properties {URL:"http://localhost:8080/manual.html"}
         make new tab with properties {URL:"http://localhost:8080/server-test.html"}
         make new tab with properties {URL:"http://localhost:8080/logs-manifest.html"}
-        make new tab with properties {URL:"https://chatgpt.com/g/g-p-684eb94e1a908191819270e2ad36f8bd-app-development/project"}
+        make new tab with properties {URL:"https://chat.openai.com/g/g-p-684eb94e1a908191819270e2ad36f8bd-app-development/project"}
     end tell
 end tell
 EOF
