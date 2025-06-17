@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lighthouse Project Test (GitHub + Fallback)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        background: #f7f9fc;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 2rem;
+        text-align: center;
+        color: #18305c;
+      }
+      .card {
+        background: #fffbe7;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        max-width: 500px;
+        margin: 1.5rem auto;
+        box-shadow: 0 4px 16px #00000011;
+        border: 2px solid #ffe066;
+      }
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.3rem;
+        color: #fa7268;
+      }
+      .status-ok {
+        color: #24a17c;
+        font-weight: bold;
+      }
+      .log-box {
+        background: #111;
+        color: #0f0;
+        font-family: monospace;
+        text-align: left;
+        padding: 1rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        max-height: 300px;
+      }
+      .toggle {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+      }
+      code {
+        background: #eee;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>🚦 Server Status</h2>
+      <div class="status-ok">Server is assumed UP 🟢</div>
+      <p>
+        Backend at <code>localhost:3001</code><br />
+        Frontend at <code>localhost:8080</code>
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>📂 Projects</h2>
+      <div id="projects">🟡 Loading…</div>
+      <div
+        id="source-label"
+        style="margin-top: 1rem; font-size: 0.85rem; color: #666"
+      ></div>
+      <div class="toggle">
+        <label>
+          <input type="checkbox" id="failToggle" />
+          Simulate GitHub failure (fallback to local)
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🛠️ Debug Log</h2>
+      <div id="log" class="log-box">Waiting for response...</div>
+    </div>
+
+    <script>
+      const logBox = document.getElementById("log");
+      const log = (...lines) => {
+        logBox.textContent = lines
+          .map((l) => (typeof l === "object" ? JSON.stringify(l, null, 2) : l))
+          .join("\n\n");
+      };
+
+      const displayProjects = (projects, sourceURL) => {
+        if (!projects || !projects.length) {
+          document.getElementById("projects").textContent =
+            "No projects found.";
+          return;
+        }
+        const html = projects
+          .map(
+            (p) => `
+              <div>
+                🗂️ <b>${p.title}</b><br>
+                <small>${new Date(p.lastUpdated).toLocaleString()}</small>
+              </div>
+            `
+          )
+          .join("<hr>");
+        document.getElementById("projects").innerHTML = html;
+        document.getElementById(
+          "source-label"
+        ).innerHTML = `📄 Loaded from: <code>${sourceURL}</code>`;
+      };
+
+      const loadFrom = (url, label) =>
+        fetch(url).then((res) => {
+          if (!res.ok)
+            throw new Error(`Fetch failed from ${label} (${res.status})`);
+          return res.json();
+        });
+
+      function loadData() {
+        document.getElementById("projects").textContent = "🟡 Loading…";
+        document.getElementById("source-label").textContent = "";
+
+        const simulateFail = document.getElementById("failToggle").checked;
+        const githubURL = simulateFail
+          ? "https://raw.githubusercontent.com/DWC-TI/lighthouse-frontend/main/data/DOES_NOT_EXIST.json"
+          : "https://raw.githubusercontent.com/DWC-TI/lighthouse-frontend/main/data/projects.json";
+        const localURL = "/data/projects.json";
+
+        loadFrom(githubURL, "GitHub")
+          .then((data) => {
+            log("✅ Loaded from GitHub", data);
+            displayProjects(data.projects, githubURL);
+          })
+          .catch((err) => {
+            log("⚠️ GitHub fetch failed, falling back to local:", err.message);
+            return loadFrom(localURL, "Local").then((data) => {
+              log("✅ Loaded from local file", data);
+              displayProjects(data.projects, localURL);
+            });
+          })
+          .catch((err) => {
+            document.getElementById(
+              "projects"
+            ).innerHTML = `<b style="color:red">❌ Failed to load from all sources</b>`;
+            document.getElementById("source-label").innerHTML = "";
+            log("❌ Final fetch error", err.message);
+          });
+      }
+
+      document
+        .getElementById("failToggle")
+        .addEventListener("change", loadData);
+      loadData(); // initial
+
+      // 🔁 Auto-refresh every 5 seconds
+      setInterval(loadData, 5000);
+    </script>
+  </body>
+</html>

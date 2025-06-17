@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Daily Check-In – Sample",
+    "date": "2025-06-17",
+    "energy": "🟢🟢⚪",
+    "state": "Clear",
+    "momentum": "Current Engaged",
+    "note": "Feeling focused and ready to build."
+  },
+  {
+    "title": "Check-Out – Sample",
+    "date": "2025-06-17",
+    "energy": "🟡⚪⚪",
+    "state": "Tired but satisfied",
+    "momentum": "Beam in Motion",
+    "note": "Wrapped up a big step in the UI."
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "title": "2025 W24 Reflective Shine",
+    "path": "/logs/beacons/2025-W24-reflective-shine.md",
+    "tags": [
+      "beacons"
+    ],
+    "created": "2025-06-17T23:20:29.834Z",
+    "visible": true
+  },
+  {
+    "title": "Lighthouse App.Log",
+    "path": "/logs/beams/lighthouse-app.log.json",
+    "tags": [
+      "beams"
+    ],
+    "created": "2025-06-16T19:05:56.000Z",
+    "visible": true
+  },
+  {
+    "title": "2025 06 17",
+    "path": "/logs/checkins/2025-06-17.json",
+    "tags": [
+      "checkins"
+    ],
+    "created": "2025-06-17T23:20:29.824Z",
+    "visible": true
+  },
+  {
+    "title": "2025 06 17",
+    "path": "/logs/checkouts/2025-06-17.json",
+    "tags": [
+      "checkouts"
+    ],
+    "created": "2025-06-17T23:20:29.829Z",
+    "visible": true
+  },
+  {
+    "title": "2025 06 16 Lens Structure",
+    "path": "/logs/decisions/2025-06-16-lens-structure.md",
+    "tags": [
+      "decisions"
+    ],
+    "created": "2025-06-16T19:05:56.000Z",
+    "visible": true
+  },
+  {
+    "title": "Return Point Clarity",
+    "path": "/logs/insights/return-point-clarity.md",
+    "tags": [
+      "insights"
+    ],
+    "created": "2025-06-16T19:05:56.000Z",
+    "visible": true
+  },
+  {
+    "title": "Logs Manifest",
+    "path": "/logs/logs_manifest.json",
+    "tags": [
+      "log"
+    ],
+    "created": "2025-06-16T23:24:44.038Z",
+    "visible": true
+  },
+  {
+    "title": "Project Structure",
+    "path": "/logs/project-structure.md",
+    "tags": [
+      "log"
+    ],
+    "created": "2025-06-16T23:24:44.038Z",
+    "visible": true
+  },
+  {
+    "title": "Readme",
+    "path": "/logs/readme.md",
+    "tags": [
+      "log"
+    ],
+    "created": "2025-06-17T17:45:46.961Z",
+    "visible": true
+  },
+  {
+    "title": "Sprint Lens System",
+    "path": "/logs/sprints/sprint_lens-system.json",
+    "tags": [
+      "sprints"
+    ],
+    "created": "2025-06-16T19:05:56.000Z",
+    "visible": true
+  },
+  {
+    "title": "Matrix 2025 06 10 To 06 17",
+    "path": "/logs/summary/matrix-2025-06-10-to-06-17.md",
+    "tags": [
+      "summary"
+    ],
+    "created": "2025-06-17T23:20:29.838Z",
+    "visible": true
+  },
+  {
+    "title": "Startup 2025 06 17 0109",
+    "path": "/logs/system/startup-2025-06-17_0109.log",
+    "tags": [
+      "system"
+    ],
+    "created": "2025-06-16T23:09:02.906Z",
+    "visible": true
+  },
+  {
+    "title": "Startup 2025 06 17 0308",
+    "path": "/logs/system/startup-2025-06-17_0308.log",
+    "tags": [
+      "system"
+    ],
+    "created": "2025-06-17T01:08:48.622Z",
+    "visible": true
+  },
+  {
+    "title": "Startup 2025 06 17 0317",
+    "path": "/logs/system/startup-2025-06-17_0317.log",
+    "tags": [
+      "system"
+    ],
+    "created": "2025-06-17T01:17:13.766Z",
+    "visible": true
+  },
+  {
+    "title": "Startup 2025 06 17 0318",
+    "path": "/logs/system/startup-2025-06-17_0318.log",
+    "tags": [
+      "system"
+    ],
+    "created": "2025-06-17T01:18:41.661Z",
+    "visible": true
+  },
+  {
+    "title": "Progress Line",
+    "path": "/docs/progress/progress-line.md",
+    "tags": [
+      "progress"
+    ],
+    "created": "2025-06-17T22:59:29.889Z",
+    "visible": true
+  }
+]
